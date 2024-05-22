@@ -183,40 +183,40 @@ function DetailsTable() {
             center: true
 
         },
-        {
-            id: "statues",
-            name: 'Statues',
-            selector: row => row.statues,
-            sortable: true,
-            center: true,
-            conditionalCellStyles : [
-                {
-                    when: row => row.statues === "pending",
-                    style: {
-                        color: '#4199b6',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "accepted",
-                    style: {
-                        color: 'green',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "rejected",
-                    style: {
-                        color: 'red',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
+        // {
+        //     id: "statues",
+        //     name: 'Statues',
+        //     selector: row => row.statues,
+        //     sortable: true,
+        //     center: true,
+        //     conditionalCellStyles : [
+        //         {
+        //             when: row => row.statues === "pending",
+        //             style: {
+        //                 color: '#4199b6',
+        //                 fontSize: '16px',
+        //                 fontWeight:"700"
+        //             },
+        //         },
+        //         {
+        //             when: row => row.statues === "accepted",
+        //             style: {
+        //                 color: 'green',
+        //                 fontSize: '16px',
+        //                 fontWeight:"700"
+        //             },
+        //         },
+        //         {
+        //             when: row => row.statues === "rejected",
+        //             style: {
+        //                 color: 'red',
+        //                 fontSize: '16px',
+        //                 fontWeight:"700"
+        //             },
+        //         },
                 
-            ],
-        },
+        //     ],
+        // },
         {
             id: "edit",
             name: 'Edit',
@@ -227,22 +227,22 @@ function DetailsTable() {
             ),
             center: true
         },
-        {
-            id: "actions",
-            name: 'Actions',
-            width:"230px",
-            selector: row => (
-                <div>
-                    <button className='accept-btn' onClick={() => acceptData(row)}>
-                        Accept
-                    </button>
-                    <button className='reject-btn' onClick={() => rejectData(row)}>
-                        Reject
-                    </button>
-                </div>
-            ),
-            center: true,
-        }
+        // {
+        //     id: "actions",
+        //     name: 'Actions',
+        //     width:"230px",
+        //     selector: row => (
+        //         <div>
+        //             <button className='accept-btn' onClick={() => acceptData(row)}>
+        //                 Accept
+        //             </button>
+        //             <button className='reject-btn' onClick={() => rejectData(row)}>
+        //                 Reject
+        //             </button>
+        //         </div>
+        //     ),
+        //     center: true,
+        // }
     ];
     const carcolumns = [
         {

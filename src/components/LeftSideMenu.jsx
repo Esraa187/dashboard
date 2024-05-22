@@ -33,7 +33,7 @@ const LeftSideMenu = () => {
                     <hr />
                     <ul className="menu-items">
                         <li >
-                            <a href='#'>
+                            <a >
                                 <MdHome className='menu-icons' />Dashboard
                             </a>
                         </li>

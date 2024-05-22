@@ -3,7 +3,7 @@ import Table from './components/Table';
 import { Route, Routes } from 'react-router-dom'
 import LeftSideMenu from './components/LeftSideMenu';
 import Header from './components/Header';
-import React, { useContext } from 'react'
+import React, { useContext,useState } from 'react'
 import { SideBarContext } from './context/SideBarContext';
 import PersonalData from './components/PersonalData';
 import CarTable from './components/CarTable';
@@ -20,10 +20,16 @@ import FormDialog from './components/FormDialog';
 
 function App() {
   const { show } = useContext(SideBarContext);
+  const [dialogOpen, setDialogOpen] = useState(true);
+
+    const handleClose = () => {
+        setDialogOpen(false);
+    };
   return (
     <div className="App">
       <Header />
       <LeftSideMenu />
+      <FormDialog open={dialogOpen} handleClose={handleClose}/>
       <div className={show ? "container aa" : "container"}>
         <Routes>
           <Route element={<Table />} path='/table'></Route>

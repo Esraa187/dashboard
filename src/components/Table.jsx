@@ -71,40 +71,40 @@ function Table() {
             center: true
 
         },
-        {
-            id: "statues",
-            name: 'Statues',
-            selector: row => row.statues,
-            sortable: true,
-            center: true,
-            conditionalCellStyles : [
-                {
-                    when: row => row.statues === "pending",
-                    style: {
-                        color: '#4199b6',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "accepted",
-                    style: {
-                        color: 'green',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "rejected",
-                    style: {
-                        color: 'red',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
+        // {
+        //     id: "statues",
+        //     name: 'Statues',
+        //     selector: row => row.statues,
+        //     sortable: true,
+        //     center: true,
+        //     conditionalCellStyles : [
+        //         {
+        //             when: row => row.statues === "pending",
+        //             style: {
+        //                 color: '#4199b6',
+        //                 fontSize: '16px',
+        //                 fontWeight:"700"
+        //             },
+        //         },
+        //         {
+        //             when: row => row.statues === "accepted",
+        //             style: {
+        //                 color: 'green',
+        //                 fontSize: '16px',
+        //                 fontWeight:"700"
+        //             },
+        //         },
+        //         {
+        //             when: row => row.statues === "rejected",
+        //             style: {
+        //                 color: 'red',
+        //                 fontSize: '16px',
+        //                 fontWeight:"700"
+        //             },
+        //         },
                 
-            ],
-        },
+        //     ],
+        // },
 
     ];
     const grow=(item)=>{
