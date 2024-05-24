@@ -1,117 +1,71 @@
-import React, { useState,useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
 import DataTable from 'react-data-table-component'
 import { DataContext } from '../context/DataContext';
 import { useNavigate } from 'react-router-dom';
 
 function LiciencesTable() {
-    const { licenseData, setLecienceTable } = useContext(DataContext);
+    const [ licenseData, setLecienceTable ] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+                const response = await fetch('https://vehicle-share-api.runasp.net/api/license/Admin/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const result = await response.json();
+                setLecienceTable(result.data);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
     
-    const customStyles = {
-        rows: {
-            style: {
-            },
+        fetchData();
+    });
+    
 
-        },
-        headCells: {
-            style: {
-                fontSize: '16px',
-                fontWeight: 'bold',
-                backgroundColor: "#0E46A3",
-                color: "#fff"
-            },
-        },
-        cells: {
-            style: {
-                fontSize: '14px',
-            },
-        },
+
+    const getStatusString = (status) => {
+        switch(status) {
+            case 0:
+                return 'pending';
+            case 1:
+                return 'accepted';
+            case 2:
+                return 'rejected';
+            default:
+                return '';
+        }
     };
-
-    const columns = [
-        {
-            id: "id",
-            name: 'id',
-            selector: row => row.id,
-            sortable: true,
-            center: true,
-            width:"80px"
-        },
-        {
-            id: "imagefront",
-            name: 'ImageFront',
-            selector: row => <img src={row.imagefront} alt={row.username} onClick={()=>grow(row.imagefront)}/>,
-            sortable: true,
-            center: true
-        },
-        {
-            id: "imageback",
-            name: 'ImageBack',
-            selector: row => <img src={row.imageback} alt={row.username} onClick={()=>grow(row.imageback)}/>,
-            sortable: true,
-            center: true
-
-        },
-        {
-            id: "expiration",
-            name: 'Expiration',
-            selector: row => row.expiration,
-            sortable: true,
-            center: true
-
-        },{
-            id: "createdon",
-            name: 'CreatedOn',
-            selector: row => row.createdon,
-            sortable: true,
-            center: true,
-            width:"150px"
-
-
-        },
-        {
-            id: "userid",
-            name: 'UserId',
-            selector: row => row.userid,
-            sortable: true,
-            center: true
-
-        },
-        {
-            id: "statues",
-            name: 'Statues',
-            selector: row => row.statues,
-            sortable: true,
-            center: true,
-            conditionalCellStyles : [
-                {
-                    when: row => row.statues === "pending",
-                    style: {
-                        color: '#4199b6',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "accepted",
-                    style: {
-                        color: 'green',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "rejected",
-                    style: {
-                        color: 'red',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                
-            ],
-        },
+    const licenseColumns = [
+        { name: 'ID', selector: row => row.id, sortable: true, center: true, width: '300px' },
+        { name: 'Image Front', selector: row => <img src={row.imageFront} alt={row.id} onClick={() => grow(row.imageFront)} />, center: true , width: '175px' },
+        { name: 'Image Back', selector: row => <img src={row.imageBack} alt={row.id} onClick={() => grow(row.imageBack)} />, center: true, width: '175px' },
+        { name: 'Expiration', selector: row => row.expiration, sortable: true, center: true },
+        // Add more columns as needed
+    
+        { name: 'Status',selector: row => getStatusString(row.status),sortable: true, center: true, width: '120px', conditionalCellStyles: [
+                { when: row => row.status === 0, style: { color: '#4199b6', fontSize: '16px', fontWeight: '700' } },
+                { when: row => row.status === 1, style: { color: 'green', fontSize: '16px', fontWeight: '700' } },
+                { when: row => row.status === 2, style: { color: 'red', fontSize: '16px', fontWeight: '700' } },
+            ] },
+        
+        
     ];
+
+    const customStyles = {
+        headCells: { style: { fontSize: '16px', fontWeight: 'bold', backgroundColor: "#176B87", color: "#fff" } },
+        cells: { style: { fontSize: '14px', backgroundColor: "#eee" } },
+    };
     const grow=(item)=>{
         navigate('/image',{state:{item}})
     }
@@ -131,7 +85,7 @@ function LiciencesTable() {
                 responsive={true}
                 highlightOnHover={true}
                 data={licenseData}
-                columns={columns}
+                columns={licenseColumns}
                 customStyles={customStyles}
                 striped={true}
                 pointerOnHover={true}
