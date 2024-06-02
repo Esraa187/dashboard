@@ -1,33 +1,23 @@
-import React, { useState, useContext,useEffect } from 'react'
-import DataTable from 'react-data-table-component'
-import './table.css'
+import React, { useState, useContext, useEffect } from 'react';
+import DataTable from 'react-data-table-component';
+import './table.css';
 import { useNavigate } from 'react-router-dom';
 import { DataContext } from '../context/DataContext';
 
 function Table() {
-
     const navigate = useNavigate();
-
-    const { carData } = useContext(DataContext);
-    const { tripData } = useContext(DataContext);
-    const { personalData } = useContext(DataContext);
-    const { licenseData } = useContext(DataContext);
-    ////////////////////////////////////////////////////////////////////////
-
-
-    const { data, setData } = useContext(DataContext);
+    const { carData, tripData, personalData, licenseData, data, setData } = useContext(DataContext);
+    
     const customStyles = {
         rows: {
-            style: {
-            },
-
+            style: {},
         },
         headCells: {
             style: {
                 fontSize: '16px',
                 fontWeight: 'bold',
                 backgroundColor: "#0E46A3",
-                color: "#fff"
+                color: "#fff",
             },
         },
         cells: {
@@ -40,103 +30,80 @@ function Table() {
     const columns = [
         {
             id: "id",
-            name: 'id',
+            name: 'ID',
             selector: row => row.id,
             sortable: true,
             center: true,
-            width: "80px"
-
+            width: "300px",
         },
-        {
-            id: "image",
-            name: 'Image',
-            cell: (row) => <img src={row.image} alt={row.username} onClick={()=>grow(row.image)}/>,
-            sortable: true,
-            center: true,
-            width: "150px"
-
-        },
+        // {
+        //     id: "image",
+        //     name: 'Image',
+        //     cell: (row) => <img src={row.image} alt={row.username} onClick={() => grow(row.image)} />,
+        //     sortable: true,
+        //     center: true,
+        //     width: "150px",
+        // },
         {
             id: "username",
             name: 'Username',
-            selector: row => row.username,
+            selector: row => row.userName,
             sortable: true,
-            center: true
+            center: true,
         },
         {
             id: "phone",
             name: 'Phone',
             selector: row => row.phone,
             sortable: true,
-            center: true
-
+            center: true,
         },
-        // {
-        //     id: "statues",
-        //     name: 'Statues',
-        //     selector: row => row.statues,
-        //     sortable: true,
-        //     center: true,
-        //     conditionalCellStyles : [
-        //         {
-        //             when: row => row.statues === "pending",
-        //             style: {
-        //                 color: '#4199b6',
-        //                 fontSize: '16px',
-        //                 fontWeight:"700"
-        //             },
-        //         },
-        //         {
-        //             when: row => row.statues === "accepted",
-        //             style: {
-        //                 color: 'green',
-        //                 fontSize: '16px',
-        //                 fontWeight:"700"
-        //             },
-        //         },
-        //         {
-        //             when: row => row.statues === "rejected",
-        //             style: {
-        //                 color: 'red',
-        //                 fontSize: '16px',
-        //                 fontWeight:"700"
-        //             },
-        //         },
-                
-        //     ],
-        // },
-
     ];
-    const grow=(item)=>{
-        navigate('/image',{state:{item}})
-    }
-    /////////////////////////////////
-    const [search, SetSearch] = useState('');
+
+    const grow = (item) => {
+        navigate('/image', { state: { item } });
+    };
+
+    const [search, setSearch] = useState('');
     const [filter, setFilter] = useState([]);
-    
 
     const handleRowClick = (row) => {
-        const newCarData = carData.filter((item) => {
-            return item.userid === row.id
-        })
-        const newPersonalData = personalData.filter((item) => {
-            return item.userid === row.id
-        })
-        const newTripData = tripData.filter((item) => {
-            return item.userdataid === row.id
-        })
-        const newLicienseData = licenseData.filter((item) => {
-            return item.userid === row.id
-        })
+        const newCarData = carData.filter((item) => item.userid === row.id);
+        const newPersonalData = personalData.filter((item) => item.userid === row.id);
+        const newTripData = tripData.filter((item) => item.userdataid === row.id);
+        const newLicenseData = licenseData.filter((item) => item.userid === row.id);
 
-        navigate('/details', { state: { row, car: newCarData, personal: newPersonalData, trip: newTripData, liciense: newLicienseData } });
-    }
+        navigate('/details', { state: { row, car: newCarData, personal: newPersonalData, trip: newTripData, license: newLicenseData } });
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+            try {
+                const response = await fetch('https://vehicle-share-api.runasp.net/api/User/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                setData(result.data);
+                setFilter(result.data);  // Initialize filter state with fetched data
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [setData]);
+
     useEffect(() => {
         const result = data.filter((item) => {
-            return item.username.toLowerCase().match(search.toLocaleLowerCase());
+            return item.userName && item.userName.toLowerCase().includes(search.toLowerCase());
         });
         setFilter(result);
-    }, [search]);
+    }, [search, data]);
 
     return (
         <div className='user-table'>
@@ -154,18 +121,18 @@ function Table() {
                 pagination
                 subHeader
                 subHeaderComponent={
-                    <input type="text"
+                    <input
+                        type="text"
                         placeholder="Search..."
                         className='search'
                         value={search}
-                        onChange={(e) => SetSearch(e.target.value)}
-
+                        onChange={(e) => setSearch(e.target.value)}
                     />
                 }
                 subHeaderAlign="left"
             />
         </div>
-    )
+    );
 }
 
-export default Table
+export default Table;

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
 import DataTable from 'react-data-table-component'
 import './table.css'
 import { useNavigate } from 'react-router-dom';
@@ -6,8 +6,49 @@ import { DataContext } from '../context/DataContext';
 
 function CarTable() {
 
-    const { carData,setCarData } = useContext(DataContext);
+    const [ carData,setCarData ] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+                const response = await fetch('https://vehicle-share-api.runasp.net/api/car/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const result = await response.json();
+                setCarData(result.data);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
     
+        fetchData();
+    });
+    
+
+
+    const getStatusString = (status) => {
+        switch(status) {
+            case 0:
+                return 'pending';
+            case 1:
+                return 'accepted';
+            case 2:
+                return 'rejected';
+            default:
+                return '';
+        }
+    };
+
+
     const customStyles = {
         rows: {
             style: {
@@ -29,135 +70,30 @@ function CarTable() {
         },
     };
 
-    const columns = [
-        {
-            id: "id",
-            name: 'id',
-            selector: row => row.id,
-            sortable: true,
-            center: true
-        },
-        {
-            id: "type",
-            name: 'Type',
-            selector: row => row.type,
-            sortable: true,
-            center: true
-        },
-        {
-            id: "model",
-            name: 'Model',
-            selector: row => row.model,
-            sortable: true,
-            center: true
-
-        },
-        {
-            id: "brand",
-            name: 'Brand',
-            selector: row => row.brand,
-            sortable: true,
-            center: true
-
-        },
-        {
-            id: "plate",
-            name: 'Plate',
-            selector: row => row.plate,
-            sortable: true,
-            center: true
-
-        },
-        {
-            id: "seats",
-            name: 'Seats',
-            selector: row => row.seats,
-            sortable: true,
-            center: true
-
-        }, 
-        {
-            id: "image",
-            name: 'Image',
-            selector: row => <img src={row.image} alt={row.username} onClick={()=>grow(row.image)}/>,
-            sortable: true,
-            center: true
-
-        }, 
-        {
-            id: "LiceinesImageFront",
-            name: 'LiceinesImageFront',
-            selector: row => <img src={row.LiceinesImageFront} alt={row.username} onClick={()=>grow(row.LiceinesImageFront)}/>,
-            sortable: true,
-            center: true,
-            width:"200px"
-
-
-        },
-        {
-            id: "LiceinesImageBack",
-            name: 'LiceinesImageBack',
-            selector: row => <img src={row.LiceinesImageBack} alt={row.username} onClick={()=>grow(row.LiceinesImageBack)}/>,
-            sortable: true,
-            center: true,
-            width:"200px"
-
-        },
-        {
-            id: "LiceinesExpiration",
-            name: 'LiceinesExpiration',
-            selector: row => row.LiceinesExpiration,
-            sortable: true,
-            center: true,
-            width:"200px"
-
-
-        },
-        {
-            id: "userid",
-            name: 'UserID',
-            selector: row => row.userid,
-            sortable: true,
-            center: true,
-            width:"130px"
-        },
-        {
-            id: "statues",
-            name: 'Statues',
-            selector: row => row.statues,
-            sortable: true,
-            center: true,
-            width:"150px",
-            conditionalCellStyles : [
-                {
-                    when: row => row.statues === "pending",
-                    style: {
-                        color: '#4199b6',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "accepted",
-                    style: {
-                        color: 'green',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                {
-                    when: row => row.statues === "rejected",
-                    style: {
-                        color: 'red',
-                        fontSize: '16px',
-                        fontWeight:"700"
-                    },
-                },
-                
-            ],
-        },
-
+    const carColumns = [
+        { name: 'ID', selector: row => row.id, sortable: true, center: true },
+        { name: 'Type', selector: row => row.type, sortable: true, center: true },
+        { name: 'Model Year', selector: row => row.modelYear, sortable: true, center: true },
+        { name: 'Brand', selector: row => row.brand, sortable: true, center: true },
+        { name: 'Plate', selector: row => row.plate, sortable: true, center: true },
+        { name: 'Seats', selector: row => row.seats, sortable: true, center: true },
+        { name: 'Image', selector: row => <img src={row.image} alt={row.id} onClick={() => grow(row.image)} />, center: true, width: '150px' },
+        { name: 'License Image Front', selector: row => <img src={row.licenseImageFront} alt={row.id} onClick={() => grow(row.licenseImageFront)} />, center: true, width: '200px' },
+        { name: 'License Image Back', selector: row => <img src={row.licenseImageBack} alt={row.id} onClick={() => grow(row.licenseImageBack)} />, center: true, width: '200px' },
+        { name: 'License Expiration', selector: row => row.licenseExpiration, sortable: true, center: true, width: '200px' },
+        {  name: 'Status',selector: row => getStatusString(row.status),sortable: true, center: true, width: '120px', conditionalCellStyles: [
+           { when: row => row.status === 0, style: { color: '#4199b6', fontSize: '16px', fontWeight: '700' } },
+           { when: row => row.status === 1, style: { color: 'green', fontSize: '16px', fontWeight: '700' } },
+           { when: row => row.status === 2, style: { color: 'red', fontSize: '16px', fontWeight: '700' } },
+       ] },
+       { name: 'Actions', selector: row => (
+        <div>
+            <button className='accept-btn' onClick={() => updateCarStatus(row, 'accepted')}>Accept</button>
+            <button className='reject-btn' onClick={() => updateCarStatus(row, 'rejected')}>Reject</button>
+        </div>
+    ), center: true , width: '200px' }
     ];
+
     const grow=(item)=>{
         navigate('/image',{state:{item}})
     }
@@ -171,6 +107,10 @@ function CarTable() {
         })
         setCarData(newData)
     }
+    const updateCarStatus = (row, status) => {
+        // Update license data
+        console.log('License ID ${row.id} status updated to ${status}');
+    };
 
     return (
         <div className='user-table'>
@@ -181,7 +121,7 @@ function CarTable() {
                 responsive={true}
                 highlightOnHover={true}
                 data={carData}
-                columns={columns}
+                columns={carColumns}
                 customStyles={customStyles}
                 striped={true}
                 pointerOnHover={true}
