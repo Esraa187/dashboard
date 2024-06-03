@@ -16,7 +16,6 @@ function DetailsTable() {
     const [tripData, setTripData] = useState([]);
     const [tripNotFound, setTripNotFound] = useState(false);
 
-<<<<<<< HEAD
     const fetchUserData = async () => {
         try {
             const userId = location.state.row.id;
@@ -132,126 +131,6 @@ function DetailsTable() {
     };
 
     useEffect(() => {
-=======
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userId = location.state.row.id;
-                const token = Cookies.get('token');
-                const response = await fetch(`https://vehicle-share-api.runasp.net/api/UserData/Admin/userdataByUser/${userId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const result = await response.json();
-                if (result.data) {
-                    console.log("Fetched user data:", result.data);
-                    setUserData([result.data]);
-                    setUserNotFound(false);
-
-                    // Fetch car data using the fetched user data id
-                    fetchCarData(result.data.id);
-                    fetchLicenseData(result.data.id)
-                    fetchTripData(result.data.id)
-                } else {
-                    setUserNotFound(true);
-                    setUserData([]);
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                setUserNotFound(true);
-                setUserData([]);
-            }
-        };
-
-        const fetchCarData = async (userDataId) => {
-            try {
-                const token = Cookies.get('token');
-                const response = await fetch(`https://vehicle-share-api.runasp.net/api/car/Admin/${userDataId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const result = await response.json();
-                console.log(result.data)
-                console.log(`License ID ${result.data.length} `);
-                if (result.data) {
-                    console.log("Fetched car data:", result.data);
-                    setCarData([result.data]);
-
-                    setCarNotFound(false);
-                } else {
-                    setCarNotFound(true);
-                    setCarData([]);
-                }
-            } catch (error) {
-                console.error("Error fetching car data:", error);
-                setCarNotFound(true);
-                setCarData([]);
-            }
-        };
-
-        const fetchLicenseData = async (userDataId) => {
-            try {
-                const token = Cookies.get('token');
-                const response = await fetch(`https://vehicle-share-api.runasp.net/api/license/Admin/${userDataId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const result = await response.json();
-                console.log(result.data)
-                if (result.data) {
-                    console.log("Fetched license data:", result.data);
-                    setLicenseData([result.data]);
-                    setLicenseNotFound(false);
-                } else {
-                    setLicenseNotFound(true);
-                    setLicenseData([]);
-                }
-            } 
-            catch (error) {
-                console.error("Error fetching license data:", error);
-                setLicenseNotFound(true);
-                setLicenseData([]);
-            }
-        };
-
-        const fetchTripData = async (userDataId) => {
-            try {
-                const token = Cookies.get('token');
-                const response = await fetch(`https://vehicle-share-api.runasp.net/api/trip/Admin/TripById/${userDataId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const result = await response.json();
-                console.log(result.data);
-    
-                if (result.data) {
-                    console.log("Fetched Trip data:", result.data);
-    
-                    // Transform the data
-                    const transformedData = {
-                        ...result.data,
-                        from: `${result.data.fromLatitude}, ${result.data.fromLongitude}`,
-                        to: `${result.data.toLatitude}, ${result.data.toLongitude}`,
-                    };
-    
-                    setTripData([transformedData]);
-                    setTripNotFound(false);
-                } else {
-                    setTripNotFound(true);
-                    setTripData([]);
-                }
-            } catch (error) {
-                console.error("Error fetching trip data:", error);
-                setTripNotFound(true);
-                setTripData([]);
-            }
-        };
-    
->>>>>>> 644d4b1d65fd30c249738782de66cdb1696cfe8c
         fetchUserData();
     }, [location.state.row.id]);
 
@@ -259,11 +138,11 @@ function DetailsTable() {
     const getStatusString = (status) => {
         switch(status) {
             case 0:
-                return 'pending';
+                return 'Pending';
             case 1:
-                return 'accepted';
+                return 'Accepted';
             case 2:
-                return 'rejected';
+                return 'Rejected';
             default:
                 return '';
         }
@@ -278,16 +157,12 @@ function DetailsTable() {
         { name: 'Nationality', selector: row => row.nationality, sortable: true, center: true },
         { name: 'Address', selector: row => row.address, sortable: true, center: true },
         { name: 'Profile Image', selector: row => <img src={row.profileImage} alt={row.name} onClick={() => grow(row.profileImage)} />, center: true, width: '150px' },
-<<<<<<< HEAD
         { name: 'Edit', selector: row => <button className='edit-btn' onClick={() => editCar(row)}>Edit</button>, center: true },
-=======
->>>>>>> 644d4b1d65fd30c249738782de66cdb1696cfe8c
         { name: 'Status',selector: row => getStatusString(row.status),sortable: true, center: true, width: '120px', conditionalCellStyles: [
             { when: row => row.status === 0, style: { color: '#4199b6', fontSize: '16px', fontWeight: '700' } },
             { when: row => row.status === 1, style: { color: 'green', fontSize: '16px', fontWeight: '700' } },
             { when: row => row.status === 2, style: { color: 'red', fontSize: '16px', fontWeight: '700' } },
         ] },
-<<<<<<< HEAD
         { name: 'Actions', selector: row => (
             <div>
                 <button className='accept-btn' onClick={() => updateUserDataStatus(row, 1)}>Accept</button>
@@ -295,17 +170,6 @@ function DetailsTable() {
             </div>
         ), center: true , width: '200px' }
     ];
-=======
-        { name: 'Edit', selector: row => <button className='edit-btn' onClick={() => editCar(row)}>Edit</button>, center: true },
-        { name: 'Actions', selector: row => (
-            <div>
-                <button className='accept-btn' onClick={() => updateLicenseStatus(row, 'accepted')}>Accept</button>
-                <button className='reject-btn' onClick={() => updateLicenseStatus(row, 'rejected')}>Reject</button>
-            </div>
-        ), center: true , width: '200px' }
-    ];
-
->>>>>>> 644d4b1d65fd30c249738782de66cdb1696cfe8c
     const carColumns = [
         { name: 'ID', selector: row => row.id, sortable: true, center: true },
         { name: 'Type', selector: row => row.type, sortable: true, center: true },
@@ -324,20 +188,11 @@ function DetailsTable() {
        ] },
        { name: 'Actions', selector: row => (
         <div>
-<<<<<<< HEAD
             <button className='accept-btn' onClick={() => updateCarStatus(row, 1)}>Accept</button>
             <button className='reject-btn' onClick={() => updateCarStatus(row, 2)}>Reject</button>
         </div>
     ), center: true , width: '200px' }
     ];
-=======
-            <button className='accept-btn' onClick={() => updateLicenseStatus(row, 'accepted')}>Accept</button>
-            <button className='reject-btn' onClick={() => updateLicenseStatus(row, 'rejected')}>Reject</button>
-        </div>
-    ), center: true , width: '200px' }
-    ];
-
->>>>>>> 644d4b1d65fd30c249738782de66cdb1696cfe8c
     const licenseColumns = [
         { name: 'ID', selector: row => row.id, sortable: true, center: true, width: '300px' },
         { name: 'Image Front', selector: row => <img src={row.imageFront} alt={row.id} onClick={() => grow(row.imageFront)} />, center: true , width: '175px' },
@@ -353,13 +208,8 @@ function DetailsTable() {
         
         { name: 'Actions', selector: row => (
             <div >
-<<<<<<< HEAD
                 <button className='accept-btn' onClick={() => updateLicenseStatus(row, 1)}>Accept</button>
                 <button className='reject-btn' onClick={() => updateLicenseStatus(row, 2)}>Reject</button>
-=======
-                <button className='accept-btn' onClick={() => updateLicenseStatus(row, 'accepted')}>Accept</button>
-                <button className='reject-btn' onClick={() => updateLicenseStatus(row, 'rejected')}>Reject</button>
->>>>>>> 644d4b1d65fd30c249738782de66cdb1696cfe8c
             </div>
         ), center: true , width: '200px' }
     ];
@@ -385,7 +235,6 @@ function DetailsTable() {
     const grow = (item) => navigate('/image', { state: { item } });
     const editCar = (row) => navigate("/caredit", { state: { row } });
     
-<<<<<<< HEAD
     const updateCarStatus =async (row, Status) => {
         try {
             const carId =row.id;
@@ -463,16 +312,6 @@ function DetailsTable() {
         } catch (error) {
             console.error('Error updating license status:', error);
         }
-=======
-    const updateCarStatus = (row, status) => {
-        // Update car data
-        console.log('Car ID ${row.id} status updated to ${status}');
-    };
-    
-    const updateLicenseStatus = (row, status) => {
-        // Update license data
-        console.log('License ID ${row.id} status updated to ${status}');
->>>>>>> 644d4b1d65fd30c249738782de66cdb1696cfe8c
     };
 
     return (
